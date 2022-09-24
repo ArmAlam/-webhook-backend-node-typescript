@@ -1,0 +1,3 @@
+interface IRequestDao {
+    test: () => void;
+}

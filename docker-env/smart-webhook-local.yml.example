@@ -1,0 +1,56 @@
+version: "2.0"
+
+services:
+
+  #  af local application configuration
+
+  smart-webhook-backend:
+    build:
+      dockerfile: Dockerfile
+    container_name: smart-webhook-backend
+    restart: unless-stopped
+    ports:
+      - 9000:9000
+    volumes:
+      - UPDATE_PATH:/app
+    working_dir: /app
+    command: sh -c "yarn install &&  yarn start:dev"
+    cap_add:
+      - ALL
+    user: root
+
+#  smart-webhook-frontend:
+#    image: node:14-alpine
+#    container_name: smart-webhook-frontend
+#    ports:
+#      - 9001:9001
+#    restart: unless-stopped
+#    volumes:
+#      - UPDATE_PATH:/app
+#    working_dir: /app
+#    command: sh -c "yarn install && yarn start"
+
+  smart-webhook-db:
+    image: postgres:14
+    container_name: smart-webhook-db
+    restart: always
+    mem_limit: 1g
+    environment:
+      POSTGRES_PASSWORD: root123
+      POSTGRES_DB: smart-webhook-db
+      POSTGRES_USER: root
+    volumes:
+      - UPDATE_PATH:/var/lib/postgresql/data
+
+  smart-webhook-db-adminer:
+    image: adminer
+    container_name: smart-webhook-db-adminer
+    restart: unless-stopped
+    links:
+      - smart-webhook-db:db
+    ports:
+      - 9071:8080
+
+
+
+# End of schema application configuration
